@@ -1,7 +1,7 @@
 import {
   FormControl,
   FormControlLabel,
-  Formhelpertext,
+  FormHelperText,
   FormLabel,
   IconButton,
   InputAdornment,
@@ -181,9 +181,9 @@ const Registration = () => {
                 <MenuItem value={"user"}>user</MenuItem>
                 <MenuItem value={"admin"}>admin</MenuItem>
               </Select>
-              <Formhelpertext>
+              <FormHelperText>
                 {userTypeErr && signupFormik?.errors?.userType}
-              </Formhelpertext>
+              </FormHelperText>
             </FormControl>
           </div>
           <div className="row gap-2">
@@ -245,9 +245,9 @@ const Registration = () => {
                 }
                 label="Password"
               />
-              <Formhelpertext>
+              <FormHelperText>
                 {passwordErr && signupFormik?.errors?.password}
-              </Formhelpertext>
+              </FormHelperText>
             </FormControl>
             <FormControl
               className="col"
@@ -283,9 +283,9 @@ const Registration = () => {
                 }
                 label="Confirm password"
               />
-              <Formhelpertext>
+              <FormHelperText>
                 {confirmPasswordErr && signupFormik?.errors?.confirmPassword}
-              </Formhelpertext>
+              </FormHelperText>
             </FormControl>
           </div>
           <div className="formRow row gap-2">
@@ -349,9 +349,9 @@ const Registration = () => {
                 label="Other"
               />
             </RadioGroup>
-            <Formhelpertext>
+            <FormHelperText>
               {signupFormik?.touched?.gender && signupFormik?.errors?.gender}
-            </Formhelpertext>
+            </FormHelperText>
           </FormControl>
 
           <div className="field">
