@@ -1,0 +1,369 @@
+import {
+  FormControl,
+  FormControlLabel,
+  Formhelpertext,
+  FormLabel,
+  IconButton,
+  InputAdornment,
+  InputLabel,
+  MenuItem,
+  OutlinedInput,
+  Radio,
+  RadioGroup,
+  Select,
+  TextField,
+} from "@mui/material";
+import "../../../App.css";
+import { useContext, useRef, useState } from "react";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
+import { useFormik } from "formik";
+import validationSchema from "./YupRegistration";
+import { Link, useNavigate } from "react-router-dom";
+import { AuthContext } from "../../../context/Auth";
+import { useEffect } from "react";
+import IMask from "imask";
+
+const Registration = () => {
+  const { State, dispatch } = useContext(AuthContext);
+  const [showPassword, setShowPassword] = useState(false);
+  const navigate = useNavigate();
+  const registeredUsersData = State.RegisterationData;
+  const CNICRef = useRef(null);
+  const phoneRef = useRef(null);
+
+
+  useEffect(() => {
+    if (CNICRef.current) {
+  const mask = IMask(CNICRef.current, {
+    mask: [
+      {
+        mask: '*****-*******-*',
+        definitions: {
+          '*':/[A-Za-z0-9@#$%-]/
+        },
+      },
+    ],
+    lazy: false, 
+  });
+
+  mask.on('accept', () => {
+    signupFormik.setFieldValue('CNIC', mask.value);
+  });
+}
+
+    if (phoneRef?.current) {
+      const mask = IMask(phoneRef.current, { mask: "+{92} 000 00000000" });
+      mask.on("accept", () => {
+        signupFormik?.setFieldValue("phone", mask.value);
+      });
+    }
+  }, []);
+
+  const signupFormik = useFormik({
+    initialValues: {
+      name: "",
+      username: "",
+      userType: "",
+      email: "",
+      CNIC: "",
+      password: "",
+      confirmPassword: "",
+      phone: "",
+      DOB: "",
+      address: "",
+      gender: "",
+    },
+
+    validationSchema,
+    onSubmit: (values) => {
+      console.log(values);
+
+      const isEmailExist = registeredUsersData?.find(
+        (obj) => obj?.email === values?.email
+      );
+      const isUsernameExist = registeredUsersData?.find(
+        (obj) => obj.username === values.username
+      );
+      const isCNICExist = registeredUsersData?.find(
+        (obj) => obj.username === values.username
+      );
+
+      if (isEmailExist || isUsernameExist || isCNICExist) {
+        if (isEmailExist) {
+          signupFormik?.setFieldError(
+            "email",
+            "Email already exists. Please use another one."
+          );
+        }
+        if (isUsernameExist) {
+          signupFormik?.setFieldError(
+            "username",
+            "Username is already exists. Please use another one."
+          );
+        }
+
+        return;
+      }
+
+      if (
+        (values?.username?.toLowerCase() !== "admin" &&
+          values?.userType === "admin") ||
+        (values?.userType === "admin" &&
+          values?.username?.toLowerCase() !== "admin") ||
+        (values?.username?.toLowerCase() === "admin" &&
+          values?.userType !== "admin")
+      ) {
+        signupFormik?.setErrors({
+          userType: "Select valid user type",
+          username: "Enter valid username",
+        });
+        return;
+      }
+      dispatch({ type: "userRegistered", RegisterationData: values });
+      navigate("/");
+      signupFormik?.handleReset();
+    },
+  });
+  const nameErr = signupFormik?.touched?.name && signupFormik?.errors?.name;
+  const usernameErr =
+    signupFormik?.touched?.username && signupFormik?.errors?.username;
+  const emailErr = signupFormik?.touched?.email && signupFormik?.errors?.email;
+  const CNICErr = signupFormik?.touched?.CNIC && signupFormik?.errors?.CNIC;
+  const userTypeErr =
+    signupFormik?.touched?.userType && signupFormik?.errors?.userType;
+  const phoneErr = signupFormik?.touched?.phone && signupFormik?.errors?.phone;
+  const passwordErr =
+    signupFormik?.touched?.password && signupFormik?.errors?.password;
+  const confirmPasswordErr =
+    signupFormik?.touched?.confirmPassword &&
+    signupFormik?.errors?.confirmPassword;
+  const addressErr =
+    signupFormik?.touched?.address && signupFormik?.errors?.address;
+  const DOBErr = signupFormik?.touched?.DOB && signupFormik?.errors?.DOB;
+  return (
+    <div className="registrationPage">
+      <div className="wraper">
+        <div className="title">Signup Form</div>
+        <form onSubmit={signupFormik?.handleSubmit}>
+          <div className="formRow row gap-2">
+            <TextField
+              className="col"
+              label="Name"
+              margin="dense"
+              variant="outlined"
+              {...signupFormik?.getFieldProps("name")}
+              error={nameErr}
+              helpertext={nameErr && signupFormik?.errors?.name}
+            />
+            <TextField
+              className="col"
+              label="Username"
+              margin="dense"
+              variant="outlined"
+              {...signupFormik?.getFieldProps("username")}
+              error={usernameErr}
+              helpertext={usernameErr && signupFormik?.errors?.username}
+            />
+            <FormControl
+              className="col"
+              margin="dense"
+              error={userTypeErr}
+              fullWidth
+            >
+              <InputLabel id="demo-simple-select-label">User Type</InputLabel>
+              <Select
+                labelId="demo-simple-select-label"
+                helpertext={userTypeErr && signupFormik?.errors?.userType}
+                id="demo-simple-select"
+                {...signupFormik?.getFieldProps("userType")}
+                label="User Type"
+              >
+                <MenuItem value={"user"}>user</MenuItem>
+                <MenuItem value={"admin"}>admin</MenuItem>
+              </Select>
+              <Formhelpertext>
+                {userTypeErr && signupFormik?.errors?.userType}
+              </Formhelpertext>
+            </FormControl>
+          </div>
+          <div className="row gap-2">
+            <TextField
+              className="col"
+              label="Email"
+              type="email"
+              margin="dense"
+              variant="outlined"
+              {...signupFormik?.getFieldProps("email")}
+              error={emailErr}
+              helpertext={emailErr && signupFormik?.errors?.email}
+            />
+
+            <TextField
+              name="CNIC"
+              inputRef={CNICRef}
+              className="col"
+              label="CNIC"
+              margin="dense"
+              variant="outlined"
+              placeholder="XXXXX-XXXXXXX-X"
+              error={CNICErr}
+              helpertext={CNICErr && signupFormik.errors.CNIC}
+            />
+          </div>
+          <div className="row gap-2">
+            <FormControl
+              className="col"
+              fullWidth
+              variant="outlined"
+              margin="dense"
+              error={passwordErr}
+            >
+              <InputLabel htmlFor="outlined-adornment-password">
+                Password
+              </InputLabel>
+              <OutlinedInput
+                id="outlined-adornment-password"
+                type={showPassword ? "text" : "password"}
+                {...signupFormik?.getFieldProps("password")}
+                endAdornment={
+                  <InputAdornment position="end">
+                    <IconButton
+                      sx={passwordErr && { color: "#F44336" }}
+                      aria-label={
+                        showPassword
+                          ? "hide the password"
+                          : "display the password"
+                      }
+                      onClick={() => {
+                        setShowPassword((show) => !show);
+                      }}
+                      edge="end"
+                    >
+                      {showPassword ? <VisibilityOff /> : <Visibility />}
+                    </IconButton>
+                  </InputAdornment>
+                }
+                label="Password"
+              />
+              <Formhelpertext>
+                {passwordErr && signupFormik?.errors?.password}
+              </Formhelpertext>
+            </FormControl>
+            <FormControl
+              className="col"
+              fullWidth
+              variant="outlined"
+              margin="dense"
+              error={confirmPasswordErr}
+            >
+              <InputLabel htmlFor="outlined-adornment-password">
+                Confirm password
+              </InputLabel>
+              <OutlinedInput
+                id="outlined-adornment-password"
+                type={showPassword ? "text" : "password"}
+                {...signupFormik?.getFieldProps("confirmPassword")}
+                endAdornment={
+                  <InputAdornment position="end">
+                    <IconButton
+                      sx={confirmPasswordErr && { color: "#F44336" }}
+                      aria-label={
+                        showPassword
+                          ? "hide the password"
+                          : "display the password"
+                      }
+                      onClick={() => {
+                        setShowPassword((show) => !show);
+                      }}
+                      edge="end"
+                    >
+                      {showPassword ? <VisibilityOff /> : <Visibility />}
+                    </IconButton>
+                  </InputAdornment>
+                }
+                label="Confirm password"
+              />
+              <Formhelpertext>
+                {confirmPasswordErr && signupFormik?.errors?.confirmPassword}
+              </Formhelpertext>
+            </FormControl>
+          </div>
+          <div className="formRow row gap-2">
+            <TextField
+              name="phone"
+              inputRef={phoneRef}
+              label="Phone Number"
+              margin="dense"
+              className="col"
+              variant="outlined"
+              placeholder="+92 XXX XXXXXXX"
+              error={phoneErr}
+              helpertext={phoneErr && signupFormik.errors.phone}
+            />
+            <TextField
+              className="col"
+              label="Date of Birth"
+              type="date"
+              margin="dense"
+              variant="outlined"
+              InputLabelProps={{ shrink: true }}
+              {...signupFormik?.getFieldProps("DOB")}
+              error={DOBErr}
+              helpertext={DOBErr && signupFormik?.errors?.DOB}
+            />
+          </div>
+          <TextField
+            className="col"
+            label="Enter Address"
+            fullWidth
+            type="text"
+            margin="dense"
+            variant="outlined"
+            {...signupFormik?.getFieldProps("address")}
+            error={addressErr}
+            helpertext={addressErr && signupFormik?.errors?.address}
+          />
+          <FormControl
+            component="fieldset"
+            margin="dense"
+            error={
+              signupFormik.touched.gender && Boolean(signupFormik.errors.gender)
+            }
+          >
+            <FormLabel component="legend">Gender</FormLabel>
+            <RadioGroup
+              row
+              name="gender"
+              value={signupFormik?.values?.gender}
+              onChange={signupFormik?.handleChange}
+            >
+              <FormControlLabel value="male" control={<Radio />} label="Male" />
+              <FormControlLabel
+                value="female"
+                control={<Radio />}
+                label="Female"
+              />
+              <FormControlLabel
+                value="other"
+                control={<Radio />}
+                label="Other"
+              />
+            </RadioGroup>
+            <Formhelpertext>
+              {signupFormik?.touched?.gender && signupFormik?.errors?.gender}
+            </Formhelpertext>
+          </FormControl>
+
+          <div className="field">
+            <input type="submit" value="Signup" />
+          </div>
+          <div className="signup-link">
+            Already have an account <Link to="/">Login now</Link>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+};
+
+export default Registration;

@@ -1,86 +1,101 @@
 import { createContext, useReducer } from "react";
 import secureLocalStorage from "react-secure-storage";
+import { toast } from "react-toastify";
+import { BooksArr } from "../Data";
 
 export const StoreContext = createContext(null);
-
 const StoreContextProvider = ({ children }) => {
-  const InitialVal = {
-    cartData: secureLocalStorage?.getItem("cartData") || [],
-    wishListData: secureLocalStorage?.getItem("wishListData") || [],
-    totalPrice: findTotalPrice(secureLocalStorage?.getItem("cartData"))
-  };
 
-  // console.log(InitialVal);
-  const [State, dispatch] = useReducer(handleCart, InitialVal);
+  let cartInitData = secureLocalStorage?.getItem("cartData") || []
+  let wishlistInitData = secureLocalStorage?.getItem("wishListData") || []
+  let booksInitData = secureLocalStorage?.getItem("BooksArr") || BooksArr
   function findTotalPrice(cartData) {
-    const priceArr = cartData?.map((item) => item?.totalPrice);
-    const totalPrice =
-      (cartData?.length > 0 && priceArr?.reduce((acc, curr) => acc + curr)) ||
-      0;
+    const priceArr =  cartData?.map((item) => item?.totalPrice) 
+    // const totalPrice =
+    //   (cartData?.length > 0 && cartData?.reduce((acc, curr) => {  return acc.totalPrice  + curr.totalPrice ,0}))
+    const totalPrice = cartData?.length && priceArr.reduce((acc,curr)=> acc + curr) || 0
     return totalPrice;
   }
-  function handleCart(State, action) {
+
+  const InitialVal = {
+    cartData: cartInitData,
+    wishListData: wishlistInitData,
+    totalPrice: findTotalPrice(secureLocalStorage?.getItem("cartData")) || 0,
+    AllBooks: booksInitData,
+  };
+
+  const [State, dispatch] = useReducer(handleStore, InitialVal);
+  function handleStore(State, action) {
     if (action.type === "addToCart") {
       const cartAddedData = action?.cartData;
-      const existingItemIndex = State?.cartData?.findIndex(
-        (item) => item?.id === cartAddedData?.id
+      const productIndex = cartInitData?.findIndex(
+        (item) => item?.title === cartAddedData?.title
       );
-      if (existingItemIndex === -1) {
-        const newCartData = [...State.cartData, cartAddedData];
-        secureLocalStorage.setItem("cartData", newCartData);
-        const totalPrice = findTotalPrice(newCartData);
+      if (productIndex === -1) {
+        cartInitData = [...cartInitData, cartAddedData]
 
-        return { ...State, cartData: newCartData, totalPrice };
+        secureLocalStorage.setItem("cartData", cartInitData)
+        // const updatedState={...State,cartData:[...cartInitData]}
+        const totalPrice = findTotalPrice(cartInitData)
+        return { ...State, cartData: cartInitData, totalPrice }
       } else {
-        const updatedCartData = [...State.cartData];
-        const existingItem = updatedCartData[existingItemIndex];
-        updatedCartData[existingItemIndex] = {
+        const existingItem = cartInitData[productIndex];
+        cartInitData[productIndex] = {
           ...existingItem,
-          quantity: existingItem?.quantity + 1,
-          totalPrice: existingItem?.totalPrice + existingItem?.price,
+          quantity: existingItem.quantity + 1,
+          totalPrice: existingItem.totalPrice + existingItem.price,
         };
-        secureLocalStorage.setItem("cartData", updatedCartData);
-        const totalPrice = findTotalPrice(updatedCartData);
-        return { ...State, cartData: updatedCartData, totalPrice };
+        const totalPrice = findTotalPrice(cartInitData);
+        secureLocalStorage.setItem("cartData", cartInitData);
+        return { ...State, cartData: cartInitData, totalPrice };
       }
-    } else if (action?.type === "removeFromCart") {
-      const targetProductId = action?.productId;
-      const newState = State?.cartData?.filter(
-        (item) => item?.id !== targetProductId
+    }
+    else if (action?.type === "removeFromCart") {
+      const targetProductTitle = action?.productTitle;
+      cartInitData = cartInitData.filter(
+        (item) => item?.title !== targetProductTitle
       );
-      const totalPrice = findTotalPrice(newState);
+      const totalPrice = findTotalPrice(cartInitData);
 
-      secureLocalStorage?.setItem("cartData", newState);
-      return { ...State, cartData: newState, totalPrice };
+      secureLocalStorage?.setItem("cartData", cartInitData);
+      return { ...State, cartData: cartInitData, totalPrice };
     } else if (action?.type === "decreaseQuantity") {
-      const updatedCartData = [...State.cartData];
-      const existingItemIndex = updatedCartData?.findIndex(
-        (item) => item?.id === action?.productId
+      const existingItemIndex = cartInitData?.findIndex(
+        (item) => item?.title === action?.productTitle
       );
 
-      const existingItem = updatedCartData[existingItemIndex];
-      if (existingItem?.quantity <= 1) {
-        const newCartData = updatedCartData?.filter(
-          (item) => item.id !== action?.productId
+      const existingItem = cartInitData[existingItemIndex];
+      if (existingItem?.quantity === 1) {
+        cartInitData = cartInitData?.filter(
+          (item) => item.title !== action?.productTitle
         );
-        const totalPrice = findTotalPrice(newCartData);
-
-        secureLocalStorage?.setItem("cartData", newCartData);
-        return { ...State, cartData: newCartData, totalPrice };
+        toast("Item Deleted from Cart", {
+          hideProgressBar: true,
+          autoClose: 1500,
+          closeOnClick: true,
+          draggable: true,
+          style: {
+            backgroundColor: "#cd0c0c",
+            color: "white",
+            fontWeight: "bold",
+          },
+        });
       } else {
-        updatedCartData[existingItemIndex] = {
+        cartInitData[existingItemIndex] = {
           ...existingItem,
           quantity: existingItem?.quantity - 1,
           totalPrice: existingItem?.totalPrice - existingItem?.price,
         };
-        const totalPrice= findTotalPrice(updatedCartData)
-        secureLocalStorage.setItem("cartData", updatedCartData);
-        return { ...State, cartData: updatedCartData , totalPrice};
       }
+      const totalPrice = findTotalPrice(cartInitData);
+
+      secureLocalStorage?.setItem("cartData", cartInitData);
+      return { ...State, cartData: cartInitData, totalPrice };
     } else if (action?.type === "resetCart") {
-      const totalPrice= findTotalPrice([])
-      secureLocalStorage.setItem("cartData", []);
-      return { ...State, cartData: [] , totalPrice};
+      const totalPrice = findTotalPrice([])
+      cartInitData = []
+      secureLocalStorage.setItem("cartData", cartInitData);
+      return { ...State, cartData: cartInitData, totalPrice };
     } else if (action?.type === "manageWishList") {
       const wishListProductData = action.wishListData;
       if (wishListProductData?.isChecked) {
@@ -90,23 +105,37 @@ const StoreContextProvider = ({ children }) => {
           img: wishListProductData.img,
           price: wishListProductData.price,
         };
-        const wishListProducts = [...State.wishListData, wishListObj];
-        secureLocalStorage?.setItem("wishListData", wishListProducts);
-        return { ...State, wishListData: wishListProducts };
+        // const wishListProducts = [...State.wishListData, wishListObj];
+        wishlistInitData = [...wishlistInitData, wishListObj]
       } else {
         const ObjId = wishListProductData.id;
-        const newWishlistArr = State?.wishListData.filter(
+        wishlistInitData = wishlistInitData.filter(
           (item) => item.id !== ObjId
         );
-        secureLocalStorage.setItem("wishListData", newWishlistArr);
-        return { ...State, wishListData: newWishlistArr };
       }
+      secureLocalStorage?.setItem("wishListData", wishlistInitData);
+      return { ...State, wishListData: wishlistInitData };
+    }
+    else if (action?.type === "addProducts") {
+      const newProductData = action.newProduct
+      const id= booksInitData.length + 1;
+      booksInitData = [...booksInitData, {...newProductData,id}]
+      secureLocalStorage.setItem("BooksArr", booksInitData)
+      return { ...State, AllBooks: booksInitData }
     }
   }
+  // useEffect(() => {
+  //   console.log(secureLocalStorage.getItem("cartData"))
+
+  //   console.log(State)
+  // })
   const contextValues = {
     State,
     dispatch,
   };
+  // useEffect(()=>{
+  //   console.log(State.AllBooks)
+  // },[State])
   return (
     <div>
       <StoreContext.Provider value={contextValues}>

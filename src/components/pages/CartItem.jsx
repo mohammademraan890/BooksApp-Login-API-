@@ -6,6 +6,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { StoreContext } from "../../context/StoreContext";
 import { toast } from "react-toastify";
 import Heading1 from "../Includes/Heading1";
+// import Toaster from "../Includes/Toast";
 // import { useContext } from "react";
 
 const CartItem = () => {
@@ -37,9 +38,6 @@ const CartItem = () => {
       setCartFilteredProducts(State?.cartData);
     }
   }, [search, State]);
-  // useEffect(() => {
-  //   setCartFilteredProducts(State?.cartData);
-  // }, [State]);
   return (
     <>
       {!State?.cartData?.length ? (
@@ -88,7 +86,7 @@ const CartItem = () => {
                           onClick={() =>
                             dispatch({
                               type: "decreaseQuantity",
-                              productId: item?.id,
+                              productTitle: item?.title,
                             })
                           }
                           src={remove_icon_red}
@@ -100,9 +98,7 @@ const CartItem = () => {
                           onClick={() =>
                             dispatch({
                               type: "addToCart",
-                              cartData: {
-                                id: item?.id,
-                              },
+                              cartData: item,
                             })
                           }
                           src={add_icon_green}
@@ -117,7 +113,7 @@ const CartItem = () => {
                         onClick={() => {
                           dispatch({
                             type: "removeFromCart",
-                            productId: item?.id,
+                            productTitle: item?.title,
                           });
                           toast("Item Deleted from Cart", {
                             hideProgressBar: true,
@@ -132,8 +128,8 @@ const CartItem = () => {
                           });
                         }}
                         sx={{
-                          color: "red",
-                          borderColor: "red",
+                          color: "var(--primary-color)",
+                          borderColor: "var(--primary-color)",
                         }}
                       >
                         <DeleteIcon />

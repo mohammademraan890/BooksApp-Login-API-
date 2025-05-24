@@ -5,6 +5,7 @@ import "swiper/css";
 import "swiper/css/navigation";
 import Button from "./Includes/Button";
 import React from "react";
+import ImageLoader from "./Includes/ImageLoader";
 
 const HeroSlider = () => {
  
@@ -31,7 +32,7 @@ const HeroSlider = () => {
                  <Button text={"Read More"}/>
                 </div>
                 <div className="hero-img mt-md-0 mt-sm-3 mt-3">
-                  <img src={item.img} alt="" />
+                  <ImageLoader src={item.img}/>
                 </div>
               </div>
             </SwiperSlide>

@@ -1,8 +1,8 @@
 import React from "react";
 
-const Loader = () => {
+const Loader = ({height}) => {
   return (
-    <div className="loader-Cont">
+    <div style={{height:height}} className="loader-Cont">
       <div className="loader"></div>
     </div>
   )

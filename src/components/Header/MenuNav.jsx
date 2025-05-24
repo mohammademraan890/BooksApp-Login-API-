@@ -28,13 +28,13 @@ const MenuNav = () => {
               </Link>
               <ul className="dropdown-menu">
                 <li>
-                  <Link to="/Cart" className="dropdown-item">Cart</Link>
+                  <Link to="/addproducts" className="dropdown-item">Add Products</Link>
                 </li>
                 <li>
-                  <Link className="dropdown-item" to="#">Page two</Link>
+                  <Link className="dropdown-item" to="/reactSelect">React Select</Link>
                 </li>
                 <li>
-                  <Link className="dropdown-item" to="#">Page three</Link>
+                  <Link className="dropdown-item" to="/BooksAPI">API Books</Link>
                 </li>
               </ul>
             </li>

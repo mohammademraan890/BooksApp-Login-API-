@@ -1,63 +1,69 @@
-import React, { useEffect, useState } from "react"
-import { galleryData } from "../../Data"
+import React, { useContext, useEffect, useState } from "react"
 import Heading1 from "../Includes/Heading1"
 import ProductCard from "../Includes/ProductCard"
+import { StoreContext } from "../../context/StoreContext"
 const ProductGallery = () => {
-    
-    const [activeProduct, setActiveProduct] = useState("all")
-    const handleActive = (e)=>{
-        setActiveProduct(e.target.dataset.category)
-        console.log(e.target.dataset.category)
-    }
-    useEffect(()=>{
-        document.title="Gallery || BookSaw"
-      },[])
-    // console.log(setCartProducts, typeof setCartProducts)
-  return (
-    <>
-    <Heading1 title={"popular books"} desc={"some quality items"} />
-    <section data-aos="fade-up" data-aos-duration="1100" className="gallery-sec">
-    <div className="gallery-sec-inner obj-width1">
-        <div className="wrap">
+    const { State } = useContext(StoreContext)
+    const { AllBooks } = State
+    const [filteredBooks, setFilteredBooks] = useState(AllBooks)
+    const [activeProduct, setActiveProduct] = useState("all genre")
+ 
+    useEffect(() => {
+        if (activeProduct === "all genre") {
+            setFilteredBooks(AllBooks)
+        }
+        else {
+            const newArr = AllBooks?.filter((item) => item?.category === activeProduct)
+            setFilteredBooks(newArr)
+        }
+    }, [activeProduct, AllBooks])
 
-            <div className="gallery-wrap">
+    useEffect(() => {
+        document.title = "Gallery || BookSaw"
+    }, [])
+    const categories = ["all genre", "business", "technology", "romantic", "adventure", "fictional"]
+    return (
+        <>
+            <Heading1 title={"popular books"} desc={"some quality items"} />
+            <section data-aos="fade-up" data-aos-duration="1100" className="gallery-sec">
+                <div className="gallery-sec-inner obj-width1">
+                    <div className="wrap">
+                        <div className="gallery-wrap">
 
-                <ul id="filters" className="clearfix">
-                    <li><span  onClick={handleActive} id="first-li" className={ ` filter ${activeProduct ==="all" ? "active" : ""}  `}
-                           data-category="all">All
-                            Genre</span></li>
-                    <li><span  onClick={handleActive} className={ ` filter ${activeProduct ==="business" ? "active" : ""}  `}  data-category="business">Business</span></li>
-                    <li><span  onClick={handleActive} className={ ` filter ${activeProduct ==="technology" ? "active" : ""}  `}  data-category="technology">Technology</span></li>
-                    <li><span  onClick={handleActive} className={ ` filter ${activeProduct ==="romantic" ? "active" : ""}  `}  data-category="romantic">Romantic</span></li>
-                    <li><span  onClick={handleActive} className={ ` filter ${activeProduct ==="adventure" ? "active" : ""}  `}  data-category="adventure">Adventure</span></li>
-                    <li><span  onClick={handleActive} className={ ` filter ${activeProduct ==="fictional" ? "active" : ""}  `}  data-category="fictional">Fictional</span></li>
-                </ul>
+                            <ul id="filters" className="clearfix">
+                                {categories?.map((category, index) => {
+                                    return <li key={index}><span onClick={()=>{
+                                        setActiveProduct(category)
+                                    }} className={` filter ${activeProduct === category ? "active" : ""}  `} >{category}</span></li>
+                                })}
 
-                <div id="gallery" className="row mt-lg-5 mt-md-4 mt-sm-3 mt-2">
+                            </ul>
 
-                {galleryData?.map((item) => {
-                    return (
-                          (activeProduct === "all" || item?.category === activeProduct)  && <ProductCard
-                                key={item.id}
-                                id={item.id}
-                                title={item.title}
-                                author={item.author}
-                                price={item.price}
-                                img={item.img}
-                                
-                            />
-                    )
-                })}
+                            <div id="gallery" className="row mt-lg-5 mt-md-4 mt-sm-3 mt-2">
 
+                                {filteredBooks?.map((item) => {
+                                    return (
+                                        <ProductCard
+                                            key={item.id}
+                                            id={item.id}
+                                            title={item.title}
+                                            author={item.author}
+                                            price={item.price}
+                                            img={item.img}
+
+                                        />
+                                    )
+                                })}
+
+                            </div>
+
+                        </div>
+
+                    </div>
                 </div>
-
-            </div>
-
-        </div>
-    </div>
-</section>
-</>
-  )
+            </section>
+        </>
+    )
 }
 
 export default React.memo(ProductGallery);

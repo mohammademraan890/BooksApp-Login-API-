@@ -9,9 +9,7 @@ import React from "react";
 const ClientSec = () => {
   return (
     <section
-      data-aos="fade-up"
-      data-aos-duration="1000"
-      className="client-sec mb-5"
+           className="client-sec mb-5"
     >
       <div
         id="client-carousel"
@@ -20,38 +18,35 @@ const ClientSec = () => {
         <Swiper
           loop={true}
           slidesPerView={5}
-          autoplay={{
-            delay: 500,
-            disableOnInteraction: false,
-          }}
+          
         >
           <SwiperSlide>
-            <a data-aos="fade-up" data-aos-duration="4000" href="#">
+            <a  href="#">
               <img className="img-fluid" src={brand1} alt="" />
             </a>
           </SwiperSlide>
           <SwiperSlide>
-            <a data-aos="fade-up" data-aos-duration="6000" href="#">
+            <a  href="#">
               <img className="img-fluid" src={brand2} alt="" />
             </a>
           </SwiperSlide>
           <SwiperSlide>
-            <a data-aos="fade-up" data-aos-duration="8000" href="#">
+            <a  href="#">
               <img className="img-fluid" src={brand3} alt="" />
             </a>
           </SwiperSlide>
           <SwiperSlide>
-            <a data-aos="fade-up" data-aos-duration="1000" href="#">
+            <a  href="#">
               <img className="img-fluid" src={brand4} alt="" />
             </a>
           </SwiperSlide>
           <SwiperSlide>
-            <a data-aos="fade-up" data-aos-duration="1200" href="#">
+            <a href="#">
               <img className="img-fluid" src={brand5} alt="" />
             </a>
           </SwiperSlide>
           <SwiperSlide>
-            <a data-aos="fade-up" data-aos-duration="6000" href="#">
+            <a href="#">
               <img className="img-fluid" src={brand2} alt="" />
             </a>
           </SwiperSlide>

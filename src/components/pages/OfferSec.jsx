@@ -1,8 +1,10 @@
-import { DiscountBooks } from "../../Data";
+import { BooksArr } from "../../Data";
 import ProductCard from "../Includes/ProductCard";
 import Heading1 from "../Includes/Heading1";
-import React, { useEffect } from "react";
-const OfferSec = ({cartProducts, setCartProducts}) => {
+import React, { useContext, useEffect } from "react";
+import { StoreContext } from "../../context/StoreContext";
+const OfferSec = () => {
+  const {State} = useContext(StoreContext)
   useEffect(()=>{
     document.title="Your Offers|| BookSaw"
   },[])
@@ -16,11 +18,11 @@ const OfferSec = ({cartProducts, setCartProducts}) => {
       >
         <div className="offersec-inner obj-width1">
           <div className="row">
-            {DiscountBooks?.map((item) => {
+            {State?.AllBooks?.slice(11,15)?.map((item) => {
               return (
                 <ProductCard
                   key={item?.id}
-                  id={item.id}
+                  id={item?.id}
                   title={item?.title}
                   author={item?.author}
                   price={item?.price}
