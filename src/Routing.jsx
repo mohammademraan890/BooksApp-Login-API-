@@ -2,6 +2,8 @@ import { createBrowserRouter } from "react-router-dom"
 import { lazy } from "react"
 import AddProducts from "./components/pages/AddProducts"
 import ReactSelect from "./components/pages/ReactSelect"
+import APIPagination from "./components/pages/APIPagination"
+import APIPractice from "./components/pages/APIPractice"
 
 const Layout = lazy(() => import("./components/Layouts/Layout"))
 const Home = lazy(() => import("./components/pages/Home"))
@@ -17,6 +19,7 @@ const Registeration = lazy(() => import("./components/pages/Registration/Registr
 const PublicWrapper = lazy(() => import("./components/Layouts/PublicWrapper"))
 const MainWrapper = lazy(() => import("./components/Layouts/MainWrapper"))
 const BooksAPI = lazy(() => import("./components/pages/BooksAPI"))
+const APIPagination2 = lazy(() => import("./components/pages/APIPagination2"))
 export const routes = createBrowserRouter([
  {element: <MainWrapper/>,
     children: [
@@ -82,6 +85,18 @@ export const routes = createBrowserRouter([
             {
                 path: "/BooksAPI",
                 element: <BooksAPI />
+            },
+            {
+                path: "/BooksAPIPagination",
+                element: <APIPagination />
+            },
+            {
+                path: "/BooksAPIPagination2",
+                element: <APIPagination2 />
+            },
+            {
+                path: "/apipractice",
+                element: <APIPractice />
             },
         ]
     }

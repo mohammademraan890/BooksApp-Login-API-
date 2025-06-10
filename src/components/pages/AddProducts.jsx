@@ -5,7 +5,7 @@ import { number, object, string } from "yup";
 import ProductCard from "../Includes/ProductCard"
 import { toast } from "react-toastify";
 import { useContext } from "react";
-import { StoreContext } from "../../context/StoreContext";
+import { AppContext } from "../../context/AppContext";
 import ExcelJS from 'exceljs';
 
 const exportWithExcelJS = async (data, fileName = "data-export") => {
@@ -35,7 +35,7 @@ const exportWithExcelJS = async (data, fileName = "data-export") => {
 };
 
 const AddProducts = () => {
-    const { State, dispatch } = useContext(StoreContext)
+    const { State, dispatch } = useContext(AppContext)
     const {AllBooks}=State
     const validationSchema = object({
         title: string().required("Title is required"),

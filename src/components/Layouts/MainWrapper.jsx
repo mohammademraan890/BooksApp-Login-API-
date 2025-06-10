@@ -1,11 +1,8 @@
-import { Navigate, Outlet, useLocation, useNavigate } from "react-router-dom";
+import { Outlet, useNavigate } from "react-router-dom";
 // import Loader from "../loader/Loader";
-import { useContext, useEffect } from "react";
-import { AuthContext } from "../../context/Auth";
+import { useEffect } from "react";
 
 const MainWrapper = () => {
-  const {State} = useContext(AuthContext)
-  const location = useLocation();
   const navigate = useNavigate();
     
   useEffect(() => {
@@ -25,13 +22,10 @@ const MainWrapper = () => {
     }
     window.addEventListener("storage", handleStorage);
    
+    
   }, []);
 
-  if (location.pathname === "/registered-users") {
-    if (State?.LoginUserData?.username?.toLowerCase() !== "admin") {
-      return <Navigate to={"/home"} />;
-    }
-  }
+  
   
   return (
     <>

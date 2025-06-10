@@ -19,37 +19,38 @@ import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { useFormik } from "formik";
 import validationSchema from "./YupRegistration";
 import { Link, useNavigate } from "react-router-dom";
-import { AuthContext } from "../../../context/Auth";
+// import { AuthContext } from "../../../context/Auth";
 import { useEffect } from "react";
 import IMask from "imask";
+import { AppContext } from "../../../context/AppContext";
 
 const Registration = () => {
-  const { State, dispatch } = useContext(AuthContext);
+  const { State, dispatch } = useContext(AppContext);
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
   const registeredUsersData = State.RegisterationData;
   const CNICRef = useRef(null);
   const phoneRef = useRef(null);
-
+  // console.log(registeredUsersData)
 
   useEffect(() => {
     if (CNICRef.current) {
-  const mask = IMask(CNICRef.current, {
-    mask: [
-      {
-        mask: '*****-*******-*',
-        definitions: {
-          '*':/[A-Za-z0-9@#$%-]/
-        },
-      },
-    ],
-    lazy: false, 
-  });
+      const mask = IMask(CNICRef.current, {
+        mask: [
+          {
+            mask: '*****-*******-*',
+            definitions: {
+              '*': /[A-Za-z0-9@#$%-]/
+            },
+          },
+        ],
+        lazy: false,
+      });
 
-  mask.on('accept', () => {
-    signupFormik.setFieldValue('CNIC', mask.value);
-  });
-}
+      mask.on('accept', () => {
+        signupFormik.setFieldValue('CNIC', mask.value);
+      });
+    }
 
     if (phoneRef?.current) {
       const mask = IMask(phoneRef.current, { mask: "+{92} 000 00000000" });
@@ -59,10 +60,41 @@ const Registration = () => {
     }
   }, []);
 
+  // async function formData(data) {
+  //   const frmData = new FormData();
+  //   for (const key in data) {
+  //     if (key === "img") {
+  //       frmData.append("img", data.img);
+  //     } else {
+  //       frmData.append(key, data[key]);
+
+  //     }
+  //   }
+  //   console.log(frmData)
+
+  //   try {
+  //     const response = await axios?.post("https://httpbin.org/post", frmData,
+  //       //   {
+  //       //   headers: {
+  //       //     "Content-Type": "multipart/form-data",
+  //       //   },
+  //       // }
+  //     );
+
+  //     console.log(response.data);
+  //   } catch (err) {
+  //     console.error("Form submission error:", err);
+  //   }
+  // }
+
+  // useEffect(()=>{
+  //   formData()
+  // })
   const signupFormik = useFormik({
     initialValues: {
       name: "",
       username: "",
+      // img: "",
       userType: "",
       email: "",
       CNIC: "",
@@ -84,11 +116,8 @@ const Registration = () => {
       const isUsernameExist = registeredUsersData?.find(
         (obj) => obj.username === values.username
       );
-      const isCNICExist = registeredUsersData?.find(
-        (obj) => obj.username === values.username
-      );
 
-      if (isEmailExist || isUsernameExist || isCNICExist) {
+      if (isEmailExist || isUsernameExist) {
         if (isEmailExist) {
           signupFormik?.setFieldError(
             "email",
@@ -119,6 +148,8 @@ const Registration = () => {
         });
         return;
       }
+      // formData(values)
+
       dispatch({ type: "userRegistered", RegisterationData: values });
       navigate("/");
       signupFormik?.handleReset();
@@ -140,6 +171,8 @@ const Registration = () => {
   const addressErr =
     signupFormik?.touched?.address && signupFormik?.errors?.address;
   const DOBErr = signupFormik?.touched?.DOB && signupFormik?.errors?.DOB;
+
+
   return (
     <div className="registrationPage">
       <div className="wraper">
@@ -153,8 +186,21 @@ const Registration = () => {
               variant="outlined"
               {...signupFormik?.getFieldProps("name")}
               error={nameErr}
-              helpertext={nameErr && signupFormik?.errors?.name}
+              helperText={nameErr && signupFormik?.errors?.name}
             />
+            {/* <TextField
+              className="col"
+              margin="dense"
+              variant="outlined"
+              type="file"
+              onChange={(event) => {
+                signupFormik.setFieldValue("img", event.target.files[0]);
+                console.log(event.target.files[0])
+              }}
+              error={signupFormik.touched.img && signupFormik.errors.img}
+              helperText={signupFormik.touched.img && signupFormik.errors.img}
+            /> */}
+
             <TextField
               className="col"
               label="Username"
@@ -162,7 +208,7 @@ const Registration = () => {
               variant="outlined"
               {...signupFormik?.getFieldProps("username")}
               error={usernameErr}
-              helpertext={usernameErr && signupFormik?.errors?.username}
+              helperText={usernameErr && signupFormik?.errors?.username}
             />
             <FormControl
               className="col"
@@ -170,10 +216,10 @@ const Registration = () => {
               error={userTypeErr}
               fullWidth
             >
-              <InputLabel id="demo-simple-select-label">User Type</InputLabel>
+              <InputLabel>User Type</InputLabel>
               <Select
                 labelId="demo-simple-select-label"
-                helpertext={userTypeErr && signupFormik?.errors?.userType}
+                helperText={userTypeErr && signupFormik?.errors?.userType}
                 id="demo-simple-select"
                 {...signupFormik?.getFieldProps("userType")}
                 label="User Type"
@@ -195,7 +241,7 @@ const Registration = () => {
               variant="outlined"
               {...signupFormik?.getFieldProps("email")}
               error={emailErr}
-              helpertext={emailErr && signupFormik?.errors?.email}
+              helperText={emailErr && signupFormik?.errors?.email}
             />
 
             <TextField
@@ -207,7 +253,7 @@ const Registration = () => {
               variant="outlined"
               placeholder="XXXXX-XXXXXXX-X"
               error={CNICErr}
-              helpertext={CNICErr && signupFormik.errors.CNIC}
+              helperText={CNICErr && signupFormik.errors.CNIC}
             />
           </div>
           <div className="row gap-2">
@@ -222,7 +268,7 @@ const Registration = () => {
                 Password
               </InputLabel>
               <OutlinedInput
-                id="outlined-adornment-password"
+
                 type={showPassword ? "text" : "password"}
                 {...signupFormik?.getFieldProps("password")}
                 endAdornment={
@@ -298,7 +344,7 @@ const Registration = () => {
               variant="outlined"
               placeholder="+92 XXX XXXXXXX"
               error={phoneErr}
-              helpertext={phoneErr && signupFormik.errors.phone}
+              helperText={phoneErr && signupFormik.errors.phone}
             />
             <TextField
               className="col"
@@ -309,7 +355,7 @@ const Registration = () => {
               InputLabelProps={{ shrink: true }}
               {...signupFormik?.getFieldProps("DOB")}
               error={DOBErr}
-              helpertext={DOBErr && signupFormik?.errors?.DOB}
+              helperText={DOBErr && signupFormik?.errors?.DOB}
             />
           </div>
           <TextField
@@ -321,7 +367,7 @@ const Registration = () => {
             variant="outlined"
             {...signupFormik?.getFieldProps("address")}
             error={addressErr}
-            helpertext={addressErr && signupFormik?.errors?.address}
+            helperText={addressErr && signupFormik?.errors?.address}
           />
           <FormControl
             component="fieldset"

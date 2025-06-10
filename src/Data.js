@@ -340,7 +340,7 @@ export const ArticlesData=[
         id: 1,
         img: Article1,
         date: "Jan 12, 2023",
-        desc: "Reading Books Always Makes The Moments Happy"
+        desc: `Reading Books Always Makes The Moments Happy `
     },
     {
         id: 2,

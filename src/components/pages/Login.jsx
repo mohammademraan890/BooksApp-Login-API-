@@ -13,8 +13,10 @@ import { AccountCircle, Visibility, VisibilityOff } from "@mui/icons-material";
 import { useFormik } from "formik";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
-import { AuthContext } from "../../context/Auth";
+// import { AuthContext } from "../../context/Auth";
 import * as Yup from "yup";
+import { AppContext } from "../../context/AppContext";
+import axios from "axios";
 
 const validationSchema = Yup.object({
   username: Yup.string().required("Enter username."),
@@ -23,10 +25,29 @@ const validationSchema = Yup.object({
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
-  const { dispatch, State } = useContext(AuthContext);
+  const { dispatch, State } = useContext(AppContext);
   const location = useLocation();
   const navigate = useNavigate();
+  const APIURL=import.meta.env.VITE_BOOKS_API_URL;
+  async function token() {
+    try {
+      const token = "QpwL5tke4Pnpja7X4";
 
+      const response = await axios.get(`${APIURL}/users?page=2`, {
+        headers: {
+          'x-api-key': 'reqres-free-v1',
+          "Authorization": `Bearer ${token}`,
+          "Content-Type": "application/json"
+        }
+      });
+      console.log(response.data);
+    }
+    catch (err) {
+      console.log(err);
+    }
+
+
+  }
   const loginFormik = useFormik({
     initialValues: {
       username: "",
@@ -41,20 +62,28 @@ const Login = () => {
       const LoginData = signupData?.find(
         (obj) => obj?.username?.toLowerCase() === username?.toLowerCase()
       );
-      if (LoginData.password !== password) {
-        loginFormik?.setFieldError("password", "Password is incorrect");
-        return
-      }
-      if (LoginData) {
-        const LoginDataIndex = signupData?.findIndex((item) => item?.username?.toLowerCase() === username?.toLowerCase())
-        const LoginDataWithIndex = { ...LoginData, LoginDataIndex }
+      console.log(LoginData)
 
-        dispatch({ type: "LoginUser", LoginData: LoginDataWithIndex })
-        loginFormik.handleReset();
-        navigate("/home", { state: { showWelcomeToast: true } });
+
+      if (LoginData) {
+        if (LoginData?.password === password) {
+          const LoginDataIndex = signupData?.findIndex((item) => item?.username?.toLowerCase() === username?.toLowerCase())
+          const LoginDataWithIndex = { ...LoginData, LoginDataIndex }
+
+          dispatch({ type: "LoginUser", LoginData: LoginDataWithIndex })
+          token()
+          loginFormik.handleReset();
+          navigate("/home", { state: { showWelcomeToast: true } });
+        }
+        else {
+          loginFormik?.setFieldError("password", "Password is incorrect");
+          return
+        }
+
       } else {
         loginFormik?.setFieldError("username", "Username is invalid");
         loginFormik?.setFieldError("password", "Password is invalid");
+        console.log("runnings")
       }
     },
   });

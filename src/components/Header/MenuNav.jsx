@@ -2,11 +2,12 @@ import Logo from "../Includes/Logo";
 import cartImg from "../../assets/basket.png";
 import { Link, useLocation } from "react-router-dom";
 import React, { useContext } from "react";
-import { StoreContext } from "../../context/StoreContext";
+import { AppContext } from "../../context/AppContext";
 
 const MenuNav = () => {
-  const { State } = useContext(StoreContext);
+  const { State } = useContext(AppContext);
   const location = useLocation();
+
 
   return (
     <div>
@@ -14,7 +15,7 @@ const MenuNav = () => {
         <div className="bootom-navbar-inner d-flex justify-content-between align-items-center  px-md-5 px-sm-3 px-3">
           <Logo />
           <ul className="bottom-nav-links d-lg-flex d-md-none d-sm-none m-0 d-none">
-            <li className={location.pathname === "/" ? "active" : ""}>
+            <li className={location.pathname === "/home" ? "active" : ""}>
               <Link to="/">Home</Link>
             </li>
             <li className="dropdown-center">
@@ -34,7 +35,16 @@ const MenuNav = () => {
                   <Link className="dropdown-item" to="/reactSelect">React Select</Link>
                 </li>
                 <li>
-                  <Link className="dropdown-item" to="/BooksAPI">API Books</Link>
+                  <Link className="dropdown-item" to="/BooksAPI">API Books Loader</Link>
+                </li>
+                <li>
+                  <Link className="dropdown-item" to="/BooksAPIPagination">API Books Pagination</Link>
+                </li>
+                <li>
+                  <Link className="dropdown-item" to="/apipractice">API Practice</Link>
+                </li>
+                <li>
+                  <Link className="dropdown-item" to="/BooksAPIPagination2">Books API Pagination with filter.</Link>
                 </li>
               </ul>
             </li>

@@ -2,11 +2,10 @@ import SocialLinks from "../Includes/SocialLinks";
 import cartImg from "../../assets/basket.png";
 import { Link } from "react-router-dom";
 import React, { useContext } from "react";
-import { StoreContext } from "../../context/StoreContext";
+import { AppContext } from "../../context/AppContext";
 import { IconButton, styled } from "@mui/material";
 import Badge, { badgeClasses } from "@mui/material/Badge";
 import { FavoriteBorderOutlined, LogoutOutlined } from "@mui/icons-material";
-import { AuthContext } from "../../context/Auth";
 
 const CartBadge = styled(Badge)`
   & .${badgeClasses.badge} {
@@ -15,8 +14,7 @@ const CartBadge = styled(Badge)`
   }
 `;
 const TopNav = () => {
-  const { State } = useContext(StoreContext);
-  const {dispatch} = useContext(AuthContext)
+  const { State,dispatch } = useContext(AppContext);
  
   return (
     <>

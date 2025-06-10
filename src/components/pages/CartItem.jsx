@@ -3,16 +3,18 @@ import remove_icon_red from "../../assets/remove_icon_red.png";
 import add_icon_green from "../../assets/add_icon_green.png";
 import Button from "@mui/material/Button";
 import React, { useContext, useEffect, useState } from "react";
-import { StoreContext } from "../../context/StoreContext";
+import { AppContext } from "../../context/AppContext";
 import { toast } from "react-toastify";
 import Heading1 from "../Includes/Heading1";
+import { Pagination } from "@mui/material";
 // import Toaster from "../Includes/Toast";
 // import { useContext } from "react";
 
 const CartItem = () => {
-  const { State, dispatch } = useContext(StoreContext);
+  const { State, dispatch } = useContext(AppContext);
   const [cartFliteredProducts, setCartFilteredProducts] = useState([]);
   const [search, setSearch] = useState("");
+  const [showRows,setShowRows]= useState(1)
   useEffect(() => {
     document.title = "Your Cart || BookSaw";
   }, []);
@@ -69,10 +71,10 @@ const CartItem = () => {
               </tr>
             </thead>
             <tbody>
-              {cartFliteredProducts?.map((item, index) => {
+              {cartFliteredProducts?.slice((showRows === 1 ? 0 :  showRows * 5 - 5) , showRows * 5)?.map((item, index) => {
                 return (
                   <tr key={index}>
-                    <th scope="row">{index + 1}</th>
+                    <th scope="row">{(showRows - 1) * 5 + index + 1}</th>
                     <td className="cartImg">
                       <img src={item?.img} alt="" />
                     </td>
@@ -140,6 +142,9 @@ const CartItem = () => {
               })}
             </tbody>
           </table>
+          <div className="pagination mt-3 mb-5 d-flex justify-content-end">
+              <Pagination variant="filled" sx={{color:"red"}} shape="rounded" onChange={(e,value)=> setShowRows(value)} count={Math.ceil(State.cartData.length/5)}/>
+          </div>
           <div className="d-flex align-items-center justify-content-between mt-4">
             <h3>
               Total Price:{" "}

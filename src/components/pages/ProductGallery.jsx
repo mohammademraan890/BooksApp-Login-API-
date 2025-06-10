@@ -1,9 +1,9 @@
 import React, { useContext, useEffect, useState } from "react"
 import Heading1 from "../Includes/Heading1"
 import ProductCard from "../Includes/ProductCard"
-import { StoreContext } from "../../context/StoreContext"
+import { AppContext } from "../../context/AppContext"
 const ProductGallery = () => {
-    const { State } = useContext(StoreContext)
+    const { State } = useContext(AppContext)
     const { AllBooks } = State
     const [filteredBooks, setFilteredBooks] = useState(AllBooks)
     const [activeProduct, setActiveProduct] = useState("all genre")

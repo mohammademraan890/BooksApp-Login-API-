@@ -1,15 +1,18 @@
-import React, { useContext, useEffect } from "react";
-import { StoreContext } from "../../context/StoreContext";
+import React, { useContext, useEffect, useState } from "react";
+import { AppContext } from "../../context/AppContext";
 import Heading1 from "../Includes/Heading1";
 import { toast } from "react-toastify";
-import { DeleteOutline, ShoppingCartOutlined } from "@mui/icons-material";
+import { ArrowBackIosOutlined, ArrowForwardIosOutlined, DeleteOutline, ShoppingCartOutlined } from "@mui/icons-material";
 import { Button, Tooltip } from "@mui/material";
+import ReactPaginate from "react-paginate";
 
 const WishList = () => {
-  const { State, dispatch } = useContext(StoreContext);
-  useEffect(()=>{
-    document.title="Your WishList || BookSaw"
-  },[])
+  const { State, dispatch } = useContext(AppContext);
+  const [selected, setSelected] = useState(1)
+  console.log(selected)
+  useEffect(() => {
+    document.title = "Your WishList || BookSaw"
+  }, [])
   return (
     <>
       {State?.wishListData?.length > 0 ? (
@@ -29,16 +32,15 @@ const WishList = () => {
               </tr>
             </thead>
             <tbody>
-              {State?.wishListData?.map((item, index) => {
+              {State?.wishListData?.slice(selected * 5 - 5, selected * 5)?.map((item, index) => {
                 return (
                   <tr key={index}>
-                    <th scope="row">{index + 1}</th>
+                    <th scope="row">{(selected - 1) * 5 + (index + 1)}</th>
                     <td className="wishListImg">
                       <img src={item?.img} alt="" />
                     </td>
                     <td>{item?.title}</td>
                     <td>{item?.price} $</td>
-
                     <td>
                       <div className="d-flex gap-2 align-item-center justify-content-center">
                         <Tooltip
@@ -64,20 +66,8 @@ const WishList = () => {
                                 (product) => product?.id === item?.id
                               )
                                 ? toast(
-                                    "Book already added to Cart Quantity Increased",
-                                    {
-                                      hideProgressBar: true,
-                                      autoClose: 1500,
-                                      closeOnClick: true,
-                                      draggable: true,
-                                      style: {
-                                        backgroundColor: "var(--primary-color)",
-                                        color: "white",
-                                        fontWeight: "bold",
-                                      },
-                                    }
-                                  )
-                                : toast("Book added to Cart", {
+                                  "Book already added to Cart Quantity Increased",
+                                  {
                                     hideProgressBar: true,
                                     autoClose: 1500,
                                     closeOnClick: true,
@@ -87,7 +77,19 @@ const WishList = () => {
                                       color: "white",
                                       fontWeight: "bold",
                                     },
-                                  });
+                                  }
+                                )
+                                : toast("Book added to Cart", {
+                                  hideProgressBar: true,
+                                  autoClose: 1500,
+                                  closeOnClick: true,
+                                  draggable: true,
+                                  style: {
+                                    backgroundColor: "var(--primary-color)",
+                                    color: "white",
+                                    fontWeight: "bold",
+                                  },
+                                });
                             }}
                             sx={{
                               color: "var(--primary-color)",
@@ -108,7 +110,7 @@ const WishList = () => {
                               dispatch({
                                 type: "manageWishList",
                                 wishListData: {
-                                  isChecked:false,
+                                  isChecked: false,
                                   id: item.id,
                                 }
                               });
@@ -139,6 +141,15 @@ const WishList = () => {
               })}
             </tbody>
           </table>
+          <div className="mt-4 mb-5 d-flex justify-content-end">
+            <ReactPaginate
+              nextLabel={<ArrowForwardIosOutlined className="paginationIcon" />}
+              previousLabel={<ArrowBackIosOutlined className="paginationIcon" />}
+              onPageChange={(e) => { setSelected(e.selected + 1) }}
+              marginPagesDisplayed="3"
+              pageCount={Math.ceil(State.wishListData.length / 5)} />
+
+          </div>
         </div>
       ) : (
         <div

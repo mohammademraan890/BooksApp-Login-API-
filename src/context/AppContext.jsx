@@ -1,19 +1,56 @@
-import { createContext, useReducer } from "react";
+import { createContext, useEffect, useReducer } from "react";
 import secureLocalStorage from "react-secure-storage";
 import { toast } from "react-toastify";
 import { BooksArr } from "../Data";
+import nacl from "tweetnacl";
+import {
+  decodeBase64,
+  decodeUTF8,
+  encodeBase64,
+  encodeUTF8,
+} from "tweetnacl-util";
+const key = "my_super_secret_key_0987654321!!";
+const secretKey = decodeUTF8(key);
+function encryptData(plainText) {
+  const StringifyPlainText = JSON.stringify(plainText);
+  const nonce = nacl.randomBytes(24); // 24-byte random nonce
+  const messageUint8 = decodeUTF8(StringifyPlainText);
+  const encrypted = nacl.secretbox(messageUint8, nonce, secretKey);
+  const encryptedData = {
+    nonce: encodeBase64(nonce),
+    ciphertext: encodeBase64(encrypted),
+  };
+  const StringifyEncryptedData = JSON.stringify(encryptedData);
+  return StringifyEncryptedData;
+}
+function decryptData(encryptedData) {
+  if (encryptedData) {
+    const { nonce, ciphertext } = JSON.parse(encryptedData);
+    const nonceBytes = decodeBase64(nonce);
+    const encryptedBytes = decodeBase64(ciphertext);
+    const decrypted = nacl.secretbox.open(
+      encryptedBytes,
+      nonceBytes,
+      secretKey
+    );
 
-export const StoreContext = createContext(null);
-const StoreContextProvider = ({ children }) => {
+    const stringifyDecryptedData = encodeUTF8(decrypted);
+    const decryptedData = JSON.parse(stringifyDecryptedData);
+    return decryptedData;
+  }
+}
+export const AppContext = createContext(null);
+const AppContextProvider = ({ children }) => {
 
   let cartInitData = secureLocalStorage?.getItem("cartData") || []
   let wishlistInitData = secureLocalStorage?.getItem("wishListData") || []
   let booksInitData = secureLocalStorage?.getItem("BooksArr") || BooksArr
+  let initialLogin = decryptData(localStorage?.getItem("LoginData")) || {};
+  let initialRegisteredUsers =
+    secureLocalStorage?.getItem("registerationData") || [];
   function findTotalPrice(cartData) {
-    const priceArr =  cartData?.map((item) => item?.totalPrice) 
-    // const totalPrice =
-    //   (cartData?.length > 0 && cartData?.reduce((acc, curr) => {  return acc.totalPrice  + curr.totalPrice ,0}))
-    const totalPrice = cartData?.length && priceArr.reduce((acc,curr)=> acc + curr) || 0
+    const priceArr = cartData?.map((item) => item?.totalPrice)
+    const totalPrice = cartData?.length && priceArr.reduce((acc, curr) => acc + curr) || 0
     return totalPrice;
   }
 
@@ -22,6 +59,8 @@ const StoreContextProvider = ({ children }) => {
     wishListData: wishlistInitData,
     totalPrice: findTotalPrice(secureLocalStorage?.getItem("cartData")) || 0,
     AllBooks: booksInitData,
+    LoginUserData: initialLogin,
+    RegisterationData: initialRegisteredUsers,
   };
 
   const [State, dispatch] = useReducer(handleStore, InitialVal);
@@ -118,10 +157,35 @@ const StoreContextProvider = ({ children }) => {
     }
     else if (action?.type === "addProducts") {
       const newProductData = action.newProduct
-      const id= booksInitData.length + 1;
-      booksInitData = [...booksInitData, {...newProductData,id}]
+      const id = booksInitData.length + 1;
+      booksInitData = [...booksInitData, { ...newProductData, id }]
       secureLocalStorage.setItem("BooksArr", booksInitData)
       return { ...State, AllBooks: booksInitData }
+    }
+    else if (action?.type === "LoginUser") {
+      const encryptedLoginData = encryptData(action?.LoginData);
+      localStorage?.setItem("LoginData", encryptedLoginData);
+
+      return {
+        ...State,
+        LoginUserData: action.LoginData,
+      };
+    } else if (action.type === "userRegistered") {
+      const registerdUsers = action.RegisterationData;
+      const RegisteredUsersData = [...State.RegisterationData, registerdUsers];
+      secureLocalStorage.setItem("registerationData", RegisteredUsersData);
+      return { ...State, RegisterationData: RegisteredUsersData };
+    } else if (action.type === "Logout") {
+      localStorage.removeItem("LoginData");
+      return {
+        ...State,
+        LoginUserData: {},
+      };
+    } else if (action.type === "UpdateOtherTabs") {
+      return {
+        ...State,
+        LoginUserData: action?.updatedLoginData,
+      };
     }
   }
   // useEffect(() => {
@@ -129,6 +193,19 @@ const StoreContextProvider = ({ children }) => {
 
   //   console.log(State)
   // })
+  useEffect(() => {
+    const handleStorageChange = (event) => {
+      if (event?.key === "LoginData" && event?.newValue) {
+        const updatedLoginData = decryptData(event?.newValue);
+        dispatch({ type: "UpdateOtherTabs", updatedLoginData });
+      }
+      // console.log(event);
+    };
+    window.addEventListener("storage", handleStorageChange);
+    return () => {
+      window.removeEventListener("storage", handleStorageChange);
+    };
+  }, []);
   const contextValues = {
     State,
     dispatch,
@@ -138,11 +215,11 @@ const StoreContextProvider = ({ children }) => {
   // },[State])
   return (
     <div>
-      <StoreContext.Provider value={contextValues}>
+      <AppContext.Provider value={contextValues}>
         {children}
-      </StoreContext.Provider>
+      </AppContext.Provider>
     </div>
   );
 };
 
-export default StoreContextProvider;
+export default AppContextProvider;

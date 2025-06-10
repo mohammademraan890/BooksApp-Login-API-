@@ -1,10 +1,9 @@
-import { BooksArr } from "../../Data";
 import ProductCard from "../Includes/ProductCard";
 import Heading1 from "../Includes/Heading1";
 import React, { useContext, useEffect } from "react";
-import { StoreContext } from "../../context/StoreContext";
+import { AppContext } from "../../context/AppContext";
 const FeatureSec = () => {
-  const {State}= useContext(StoreContext)
+  const {State}= useContext(AppContext)
   useEffect(()=>{
     document.title="Features || BookSaw"
   },[])
