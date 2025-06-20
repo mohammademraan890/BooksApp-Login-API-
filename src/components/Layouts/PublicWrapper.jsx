@@ -1,14 +1,18 @@
+import { useContext } from "react";
 import { Navigate, Outlet } from "react-router-dom";
+import { AppContext } from "../../context/AppContext";
 
 const PublicWrapper = () => {
-  const storage = localStorage?.getItem("LoginData");
-  if (storage) {
-    return <Navigate to={"/home"} />;
+  const {State}= useContext(AppContext)
+  const LoginData = State?.LoginUserData
+  if (LoginData) {
+    return <Navigate to={"/home"} />
   }
-// console.log(<Outlet />)
-  return (
-      <Outlet/>
-  );
+  else {
+    return (
+      <Outlet />
+    );
+  }
 };
 
 export default PublicWrapper;

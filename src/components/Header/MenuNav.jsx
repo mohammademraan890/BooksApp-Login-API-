@@ -1,11 +1,9 @@
 import Logo from "../Includes/Logo";
 import cartImg from "../../assets/basket.png";
 import { Link, useLocation } from "react-router-dom";
-import React, { useContext } from "react";
-import { AppContext } from "../../context/AppContext";
+import React from "react";
 
 const MenuNav = () => {
-  const { State } = useContext(AppContext);
   const location = useLocation();
 
 
@@ -16,7 +14,7 @@ const MenuNav = () => {
           <Logo />
           <ul className="bottom-nav-links d-lg-flex d-md-none d-sm-none m-0 d-none">
             <li className={location.pathname === "/home" ? "active" : ""}>
-              <Link to="/">Home</Link>
+              <Link to="/home">Home</Link>
             </li>
             <li className="dropdown-center">
               <Link
@@ -28,9 +26,6 @@ const MenuNav = () => {
                 pages
               </Link>
               <ul className="dropdown-menu">
-                <li>
-                  <Link to="/addproducts" className="dropdown-item">Add Products</Link>
-                </li>
                 <li>
                   <Link className="dropdown-item" to="/reactSelect">React Select</Link>
                 </li>
@@ -45,6 +40,9 @@ const MenuNav = () => {
                 </li>
                 <li>
                   <Link className="dropdown-item" to="/BooksAPIPagination2">Books API Pagination with filter.</Link>
+                </li>
+                <li>
+                  <Link className="dropdown-item" to="/useActionState">use Action State Hook</Link>
                 </li>
               </ul>
             </li>
@@ -68,10 +66,9 @@ const MenuNav = () => {
           <div className=" align-items-center d-lg-none d-md-flex d-sm-flex  d-flex">
             <div className="bottom-search d-flex align-items-center justify-content-between me-sm-3 me-2">
               <li id="cart" className="me-4">
-                <Link to="/Cart">
+              
                   <img src={cartImg} alt="" />
-                </Link>
-                <span className="cartItemsNumber">{State.cartData.length}</span>
+                <span className="cartItemsNumber">4</span>
               </li>
 
               <li id="btm-search">

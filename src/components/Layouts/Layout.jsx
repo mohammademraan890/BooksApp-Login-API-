@@ -5,34 +5,32 @@ import Footer from "../FooterSec/Footer";
 import FooterBtm from "../FooterSec/FooterBtm";
 import Quotes from "../Quotes";
 import ClientSec from "../ClientSec";
-import { ToastContainer } from "react-toastify";
 import ArticlesSec from "../pages/ArticlesSec";
+import { useContext } from "react";
+import { AppContext } from "../../context/AppContext";
+// import { useEffect, useLayoutEffect } from "react";
 
 const Layout = () => {
   const location = useLocation()
-  const AppData = localStorage?.getItem("LoginData");
-  // console.log(cardId.id)
-  if (!AppData) {
-    return <Navigate to="/" />;
+  const {State}= useContext(AppContext)
+  const LoginData = State?.LoginUserData
+  if (!LoginData) {
+    return <Navigate to={"/"} />
   }
-
- if(location.pathname=== "/Login" || location.pathname === "/signup" ){
-  return <Outlet/>
- }
-  return (
-    <div>
-      
-      <ToastContainer />
-      <TopNav />
-      <MenuNav />
-      <Outlet />
-      {location.pathname !== "/reactSelect" && <Quotes />}
-      {location.pathname === "/reactSelect" && <ArticlesSec />}
-      <ClientSec />
-      <Footer />
-      <FooterBtm />
-    </div>
-  );
+  else {
+    return (
+      <div>
+        <TopNav />
+        <MenuNav />
+        <Outlet />
+        {location.pathname !== "/reactSelect" && <Quotes />}
+        {location.pathname === "/reactSelect" && <ArticlesSec />}
+        <ClientSec />
+        <Footer />
+        <FooterBtm />
+      </div>
+    );
+  }
 };
 
 export default Layout;

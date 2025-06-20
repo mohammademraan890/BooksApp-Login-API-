@@ -1,17 +1,13 @@
-import { useContext, useState } from 'react'
+import {useState } from 'react'
 // import Select from 'react-select'
-import { AppContext } from '../../context/AppContext'
 import Heading1 from '../Includes/Heading1'
 import ProductCard from "../Includes/ProductCard"
-import makeAnimated from 'react-select/animated';
 import CreatableSelect from 'react-select/creatable';
+import { BooksArr } from '../../Data';
 
 const ReactSelect = () => {
-  const { State } = useContext(AppContext)
-  const {AllBooks} = State;
   const [selectedProduct, setSelectedProduct] = useState([])
   console.log(selectedProduct)
-  const animatedTags= makeAnimated();
   const customStyles = {
     input: (base) => ({
       ...base,
@@ -38,11 +34,11 @@ const ReactSelect = () => {
       <Heading1 title="Select Products" desc="You can select products here." />
       <CreatableSelect isMulti placeholder="Select the Books" styles={customStyles} closeMenuOnSelect={false}
         onChange={(e) =>{ 
-         const selectedBooks= AllBooks?.filter((book)=> e?.some((item)=> item?.value === book?.title))
+         const selectedBooks= BooksArr?.filter((book)=> e?.some((item)=> item?.value === book?.title))
          console.log(selectedBooks)
          setSelectedProduct(selectedBooks)
         }} 
-        options={AllBooks?.map((item) => ({
+        options={BooksArr?.map((item) => ({
           label: item?.title,
           value: item?.title,
         }))} />

@@ -1,22 +1,20 @@
-import React, { useContext, useEffect, useState } from "react"
+import React, { useEffect, useState } from "react"
 import Heading1 from "../Includes/Heading1"
 import ProductCard from "../Includes/ProductCard"
-import { AppContext } from "../../context/AppContext"
+import { BooksArr } from "../../Data"
 const ProductGallery = () => {
-    const { State } = useContext(AppContext)
-    const { AllBooks } = State
-    const [filteredBooks, setFilteredBooks] = useState(AllBooks)
+    const [filteredBooks, setFilteredBooks] = useState(BooksArr)
     const [activeProduct, setActiveProduct] = useState("all genre")
  
     useEffect(() => {
         if (activeProduct === "all genre") {
-            setFilteredBooks(AllBooks)
+            setFilteredBooks(BooksArr)
         }
         else {
-            const newArr = AllBooks?.filter((item) => item?.category === activeProduct)
+            const newArr = BooksArr?.filter((item) => item?.category === activeProduct)
             setFilteredBooks(newArr)
         }
-    }, [activeProduct, AllBooks])
+    }, [activeProduct])
 
     useEffect(() => {
         document.title = "Gallery || BookSaw"

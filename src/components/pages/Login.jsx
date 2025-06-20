@@ -11,116 +11,78 @@ import "../../App.css";
 import { useContext, useEffect, useState } from "react";
 import { AccountCircle, Visibility, VisibilityOff } from "@mui/icons-material";
 import { useFormik } from "formik";
-import { Link, useLocation, useNavigate } from "react-router-dom";
-import { toast, ToastContainer } from "react-toastify";
-// import { AuthContext } from "../../context/Auth";
-import * as Yup from "yup";
+import { useNavigate } from "react-router-dom";
 import { AppContext } from "../../context/AppContext";
-import axios from "axios";
+import { LoginUser } from "../../services/APIService";
+import { loginSchema } from "../../schema/YUP";
+import showToast from "../Includes/showToast";
 
-const validationSchema = Yup.object({
-  username: Yup.string().required("Enter username."),
-  password: Yup.string().matches(/^.{9}$/, "Password must be exactly 9 characters").required("Password is required.")
-})
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
-  const { dispatch, State } = useContext(AppContext);
-  const location = useLocation();
+  const [loader,setLoader]= useState(false)
+  const { dispatch } = useContext(AppContext);
   const navigate = useNavigate();
-  const APIURL=import.meta.env.VITE_BOOKS_API_URL;
-  async function token() {
-    try {
-      const token = "QpwL5tke4Pnpja7X4";
 
-      const response = await axios.get(`${APIURL}/users?page=2`, {
-        headers: {
-          'x-api-key': 'reqres-free-v1',
-          "Authorization": `Bearer ${token}`,
-          "Content-Type": "application/json"
-        }
-      });
-      console.log(response.data);
-    }
-    catch (err) {
-      console.log(err);
-    }
-
-
-  }
   const loginFormik = useFormik({
     initialValues: {
-      username: "",
+      email: "",
       password: "",
     },
-    validationSchema,
+    validationSchema:loginSchema,
     onSubmit: (values) => {
-      const { username, password } = values;
-      // const signupData = secureLocalStorage?.getItem("registerationData");
-      const signupData = State?.RegisterationData;
-
-      const LoginData = signupData?.find(
-        (obj) => obj?.username?.toLowerCase() === username?.toLowerCase()
-      );
-      console.log(LoginData)
-
-
-      if (LoginData) {
-        if (LoginData?.password === password) {
-          const LoginDataIndex = signupData?.findIndex((item) => item?.username?.toLowerCase() === username?.toLowerCase())
-          const LoginDataWithIndex = { ...LoginData, LoginDataIndex }
-
-          dispatch({ type: "LoginUser", LoginData: LoginDataWithIndex })
-          token()
-          loginFormik.handleReset();
-          navigate("/home", { state: { showWelcomeToast: true } });
+      (async () => {
+        try {
+          setLoader(true)
+          const response = await LoginUser(values)
+          const { user_name, user_email, user_id, data } = response.data || {}
+          const { token } = data
+          const profileData = { user_name, user_email, user_id, token };
+          console.log(token)
+          dispatch({ type: "LoginUser", profileData })
+          showToast("You LoggedIn Successfully", "var(--primary-color)")
+          navigate("/home");
         }
-        else {
-          loginFormik?.setFieldError("password", "Password is incorrect");
-          return
+        catch (err) {
+          if (err?.status === 401) {
+            loginFormik?.setErrors({email: "Email is invalid",password:"Password is invalid."});
+            showToast("Wrong Credentials!","var(--error-color)")
+          }
+          else {
+            showToast("Something went wrong! try again later" ,"var(--error-color)")
+          }
         }
-
-      } else {
-        loginFormik?.setFieldError("username", "Username is invalid");
-        loginFormik?.setFieldError("password", "Password is invalid");
-        console.log("runnings")
-      }
+        finally{
+          setLoader(false)
+        }
+      })()
     },
   });
 
-  const usernameError =
-    loginFormik?.touched?.username && loginFormik?.errors?.username;
+  const emailError =
+    loginFormik?.touched?.email && loginFormik?.errors?.email;
   const passwordError =
     loginFormik?.touched?.password && loginFormik?.errors?.password;
-  useEffect(() => {
 
-    if (location?.state?.showToast) {
-      toast.error("You LoggedOut Successfully.", {
-        position: "top-right",
-      });
-    }
-    window.history.replaceState({}, "");
-  }, [location?.state])
   useEffect(() => {
     document.title = "Login || BookSaw"
   }, [])
   return (
     <div className="loginPage">
-      <ToastContainer />
       <div className="wrapper">
         <div className="title">Login Form</div>
         <form onSubmit={loginFormik?.handleSubmit}>
           <TextField
             id="input-with-icon-textfield"
-            label="Username"
+            label="email"
             fullWidth
             margin="dense"
-            {...loginFormik?.getFieldProps("username")}
+            {...loginFormik?.getFieldProps("email")}
             slotProps={{
               input: {
                 endAdornment: (
                   <InputAdornment
-                    sx={usernameError && { color: "#F44336" }}
+                    sx={emailError && { color: "#F44336" }}
                     position="end"
                   >
                     <AccountCircle />
@@ -129,8 +91,8 @@ const Login = () => {
               },
             }}
             variant="outlined"
-            helperText={usernameError && loginFormik?.errors?.username}
-            error={usernameError}
+            helperText={emailError && loginFormik?.errors?.email}
+            error={emailError}
           />
           <FormControl
             fullWidth
@@ -170,12 +132,10 @@ const Login = () => {
             </FormHelperText>
           </FormControl>
 
-          <div className="field">
-            <input type="submit" value="Login" />
+          <div className="field position-relative">
+            {loader &&<div className="spinner-border login-loader position-absolute text-light"></div>}<input type="submit" value="Login" />
           </div>
-          <div className="signup-link">
-            Not a member? <Link to="/signup">Signup now</Link>
-          </div>
+
         </form>
       </div>
     </div>

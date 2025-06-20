@@ -14,7 +14,7 @@ const CartBadge = styled(Badge)`
   }
 `;
 const TopNav = () => {
-  const { State,dispatch } = useContext(AppContext);
+  const {dispatch } = useContext(AppContext);
  
   return (
     <>
@@ -29,7 +29,7 @@ const TopNav = () => {
             </li>
             <li>
               <a href="#">
-                <i className="bx bx-clipboard"></i>Cart:(<b>{State?.totalPrice} $</b>)
+                <i className="bx bx-clipboard"></i>Cart:(<b>350 $</b>)
               </a>
             </li>
             <li className="d-flex align-items-center cursor-pointer" onClick={()=> dispatch({type:"Logout"})}>
@@ -39,13 +39,12 @@ const TopNav = () => {
             </li>
             <div className="top-search d-lg-flex align-items-center justify-content-between d-md-none d-none">
               <li id="wishList">
-                <Link to="/wishList">
                   <IconButton>
                     <FavoriteBorderOutlined
                       sx={{ color: "var(--secondary-color)" }}
                     />
                     <CartBadge
-                      badgeContent={State?.wishListData?.length || 0}
+                      badgeContent={4}
                       showZero
                       overlap="circular"
                       sx={{
@@ -60,13 +59,10 @@ const TopNav = () => {
                       }}
                     />
                   </IconButton>
-                </Link>
               </li>
               <li id="cart">
-                <Link to="/Cart">
                   <img src={cartImg} alt="" />
-                </Link>
-                <span className="cartItemsNumber">{State?.cartData?.length}</span>
+                <span className="cartItemsNumber">{6}</span>
               </li>
               <li id="search" className="ms-4">
                 <a href="#">
@@ -74,7 +70,6 @@ const TopNav = () => {
                 </a>
               </li>
 
-              {/* <input id="topNav-inp" type="text" placeholder="Search here..."/> */}
             </div>
           </ul>
         </div>

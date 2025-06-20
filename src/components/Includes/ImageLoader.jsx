@@ -8,7 +8,6 @@ const ImageLoader = ({ src,link }) => {
     img.src = src;
     img.onload = () => {
           setLoaded(true);
-      
    };
     return ()=> setLoaded(false)
   }, [src]);

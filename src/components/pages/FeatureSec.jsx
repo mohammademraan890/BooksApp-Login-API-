@@ -1,9 +1,8 @@
 import ProductCard from "../Includes/ProductCard";
 import Heading1 from "../Includes/Heading1";
-import React, { useContext, useEffect } from "react";
-import { AppContext } from "../../context/AppContext";
+import React, {useEffect } from "react";
+import { BooksArr } from "../../Data";
 const FeatureSec = () => {
-  const {State}= useContext(AppContext)
   useEffect(()=>{
     document.title="Features || BookSaw"
   },[])
@@ -18,7 +17,7 @@ const FeatureSec = () => {
       >
         <div className="featured-sec-inner obj-width1">
           <div className="row">
-            {State?.AllBooks?.slice(0,4)?.map((item) => {
+            {BooksArr?.slice(0,4)?.map((item) => {
               return (
                 <ProductCard
                   key={item.id}

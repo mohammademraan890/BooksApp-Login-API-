@@ -2,6 +2,7 @@
 :root {
   --primary-color: #8c4f00;
   --Secondary-color: #e8e5de;
+  --error-color:#fa383e;
   --text-color: rgb(151, 151, 151);
   --image-border: rgb(233, 233, 233);
 }
@@ -1495,4 +1496,14 @@ ul[role="navigation"] li.selected a{
 
 .react-loading-skeleton{
   line-height: 4 !important;
+}
+.del-icon img{
+  cursor: pointer;
+}
+.login-loader{
+  top: 5px;
+  left: 105px;
+  font-size: 13px;
+  max-width: 20px;
+  max-height: 20px;
 }

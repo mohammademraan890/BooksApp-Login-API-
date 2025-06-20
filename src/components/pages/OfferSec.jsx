@@ -1,9 +1,8 @@
 import ProductCard from "../Includes/ProductCard";
 import Heading1 from "../Includes/Heading1";
-import React, { useContext, useEffect } from "react";
-import { AppContext } from "../../context/AppContext";
+import React, { useEffect } from "react";
+import { BooksArr } from "../../Data";
 const OfferSec = () => {
-  const {State} = useContext(AppContext)
   useEffect(()=>{
     document.title="Your Offers|| BookSaw"
   },[])
@@ -17,7 +16,7 @@ const OfferSec = () => {
       >
         <div className="offersec-inner obj-width1">
           <div className="row">
-            {State?.AllBooks?.slice(11,15)?.map((item) => {
+            {BooksArr?.slice(11,15)?.map((item) => {
               return (
                 <ProductCard
                   key={item?.id}

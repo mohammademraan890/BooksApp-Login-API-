@@ -84,7 +84,7 @@ const APIPagination2 = () => {
                                     price={35}
                                     img={
                                         item?.cover_i
-                                            ? `https://covers.openlibrary.org/b/id/295537-M.jpg`
+                                            ? `https://covers.openlibrary.org/b/id/${item?.cover_i}-M.jpg`
                                             : "https://archive.org/download/placeholder-image/placeholder-image.jpg"
                                     } />
                             ))}
