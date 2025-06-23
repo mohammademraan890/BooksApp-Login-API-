@@ -1,21 +1,17 @@
 import { useFormik } from "formik";
 import Heading1 from "../Includes/Heading1";
 import { TextField } from "@mui/material";
-import crossImg from "../../assets/failed.png"
-import { addCustomer, editCustomersData, showCustomersData } from "../../services/APIService";
-import { useContext, useEffect, useState } from "react";
-import showToast from "../Includes/showToast";
+import { addCustomer, showCustomersData } from "../../services/APIService";
+import { Suspense, use, useContext } from "react";
 import { AppContext } from "../../context/AppContext";
 import { API_YUP } from "../../schema/YUP";
+import crossImg from "../../assets/failed.png";
 
-const APIPractice = () => {
-    const [customersData, setCustomersData] = useState([])
-    const { State } = useContext(AppContext)
+
+const UseAPI = () => {
+    const { State } = useContext(AppContext);
     const { token } = State;
-       const showCustomers = async () => {
-        const usersData = await showCustomersData(token)
-        setCustomersData(usersData?.data?.data || [])
-    }
+
     const formik = useFormik({
         initialValues: {
             name: "",
@@ -24,41 +20,22 @@ const APIPractice = () => {
             balance: "",
         },
         validationSchema: API_YUP,
-        onSubmit: (values, { resetForm }) => {
-            console.log(values);
-            (async () => {
-                try {
-                    await addCustomer(token, values)
-                    showCustomers();
-                    showToast("Customer Added Successfully.", "var(--primary-color)")
-                }
-                catch (err) {
-                    console.log(err)
-                    showToast("Some Error Occur", "var(--error-color)")
-                }
-            })()
-            resetForm();
-        }
+        onSubmit: async (values, { resetForm }) => {
+            try {
+                await addCustomer(token, values);
+                resetForm();
+            } catch (err) {
+                console.log(err);
+            }
+        },
     });
 
-    useEffect(() => {
-        showCustomers()
-    }, [])
-    const DelCustomer = async (id) => {
-        const data = { id, status: "deleted" }
-        try {
-            await editCustomersData(token, data)
-            showCustomers();
-            showToast("Customer removed.", "var(--primary-color)")
-        }
-        catch (err) {
-            console.log(err)
-        }
-    }
+    const customersPromise = showCustomersData(token)
+
     return (
         <div className="obj-width1">
             <Heading1 title="Add Products" desc="You can add more Products" />
-            
+
             <form onSubmit={formik?.handleSubmit}>
                 <div className="formRow row gap-2">
                     <TextField
@@ -114,31 +91,41 @@ const APIPractice = () => {
                 </div>
             </form>
 
-            <section
-                className="mt-5"
-            >
-
-                <div className="obj-width1">
-
-                    <div className="row gap-2">
-                        {customersData?.length > 0 && customersData?.map((item, index) => {
-                            return (
-                                <div key={index} className="d-flex align-items-center justify-content-between bg-light rounded-2 p-3">
-                                    <span className="fw-bold">{index + 1}</span>
-                                    <span>{item?.name}</span>
-                                    <span>{item?.address}</span>
-                                    <span>{item?.phone}</span>
-                                    <span>{item?.balance}</span>
-                                    <span className="del-icon"><img onClick={() => DelCustomer(item?.id)} className="w-50" src={crossImg} alt="" /></span>
-                                </div>
-                            )
-                        })}
-                    </div>
-                </div>
-
-            </section>
+            <Suspense fallback={<h3 className="text-center">Loading Customers...</h3>}>
+                <API promise={customersPromise} />
+            </Suspense>
         </div>
     );
 };
 
-export default APIPractice;
+export default UseAPI;
+
+
+const API = ({ promise }) => {
+    const customersDataResponse = use(promise);
+    const customersData= customersDataResponse.data.data
+    console.log(customersData)
+    return (
+        <section className="mt-5 obj-width1">
+            <div className="row gap-2">
+                {customersData?.length > 0 &&
+                    customersData?.map((item, index) => (
+                        <div
+                            key={index}
+                            className="d-flex align-items-center justify-content-between bg-light rounded-2 p-3"
+                        >
+                            <span className="fw-bold">{index + 1}</span>
+                            <span>{item?.name}</span>
+                            <span>{item?.address}</span>
+                            <span>{item?.phone}</span>
+                            <span>{item?.balance}</span>
+                            <span className="del-icon">
+                                <img className="w-50" src={crossImg} alt="" />
+                            </span>
+                        </div>
+                    ))}
+            </div>
+        </section>
+    );
+};
+

@@ -44,6 +44,9 @@ const MenuNav = () => {
                 <li>
                   <Link className="dropdown-item" to="/useActionState">use Action State Hook</Link>
                 </li>
+                <li>
+                  <Link className="dropdown-item" to="/use_api">use() API</Link>
+                </li>
               </ul>
             </li>
 

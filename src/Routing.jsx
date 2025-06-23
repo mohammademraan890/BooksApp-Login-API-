@@ -2,6 +2,7 @@ import { createBrowserRouter } from "react-router-dom"
 import { lazy } from "react"
 import NotFound from "./NotFound"
 import ActionStateHook from "./components/pages/ActionStateHook"
+import UseAPI from "./components/pages/UseAPI"
 
 const Layout = lazy(() => import("./components/Layouts/Layout"))
 const Home = lazy(() => import("./components/pages/Home"))
@@ -86,6 +87,10 @@ export const routes = createBrowserRouter([
                     {
                         path: "/useActionState",
                         element: <ActionStateHook/>
+                    },
+                    {
+                        path: "/use_api",
+                        element: <UseAPI/>
                     },
                 ]
             }

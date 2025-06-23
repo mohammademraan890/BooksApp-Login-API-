@@ -6,7 +6,7 @@ import Loader from "../Loader";
 import { FormControl, InputLabel, MenuItem, Select } from "@mui/material";
 import ReactPaginate from "react-paginate";
 import { ArrowBackIosOutlined, ArrowForwardIosOutlined } from "@mui/icons-material";
-import Skeleton from "react-loading-skeleton";
+// import Skeleton from "react-loading-skeleton";
 
 const APIPagination2 = () => {
     const [booksQuantity, setBooksQuantity] = useState(0);
