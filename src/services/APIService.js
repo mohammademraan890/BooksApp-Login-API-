@@ -51,3 +51,89 @@ export const editCustomersData = async (token,delCustomer) => {
     }
   );
 };
+
+
+export const getSuppliersName = async (token) => {
+  return await axios.get(
+    `${import.meta.env.VITE_RETAILER_API}/suppliers/fetch-supplier`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+};
+
+export const showCustomersReport = async (token,{supplierField, statusField, startDate, endDate}) => {
+  return await axios.get(
+    `${import.meta.env.VITE_RETAILER_API}/reports/purchase-report?supplier=${supplierField}&payment_status=${statusField}&start_date=${startDate}&end_date=${endDate}`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+};
+export const fetchDesignation = async (token) => {
+  return await axios.get(
+    `${import.meta.env.VITE_RETAILER_API}/designations/fetch-designation`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+};
+export const addEmployee = async (token,employeeData) => {
+  return await axios.post(
+    `${import.meta.env.VITE_RETAILER_API}/employees/add-employee`,employeeData,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        // contentType: "multipart/form-data"
+      },
+    }
+  );
+};
+export const showEmployees = async (token) => {
+  return await axios.get(
+    `${import.meta.env.VITE_RETAILER_API}/employees/fetch-employee`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+};
+
+export const delEmployee = async (token,employeeData) => {
+  return await axios.put(
+    `${import.meta.env.VITE_RETAILER_API}/employees/change-status-employee`,employeeData,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+};
+
+export const selectEmployee = async (token,empId) => {
+  return await axios.get(
+    `${import.meta.env.VITE_RETAILER_API}/employees/fetch-employee/${empId}`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+};
+export const editEmployee = async (token,empData) => {
+  return await axios.post(
+    `${import.meta.env.VITE_RETAILER_API}/employees/edit-employee`,empData,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+};

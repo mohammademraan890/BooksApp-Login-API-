@@ -40,7 +40,6 @@ const APIPractice = () => {
             resetForm();
         }
     });
-
     useEffect(() => {
         showCustomers()
     }, [])

@@ -126,7 +126,7 @@ li {
   background: var(--_g) 0 0, var(--_g) 100% 0, var(--_g) 100% 100%,
     var(--_g) 0 100%;
   background-size: 40% 40%;
-  animation: l38 0.5s infinite;
+  animation: l38 0.3s infinite;
 }
 @keyframes l38 {
   100% {
@@ -1506,4 +1506,25 @@ ul[role="navigation"] li.selected a{
   font-size: 13px;
   max-width: 20px;
   max-height: 20px;
+}
+
+#imgLabel{
+  cursor: pointer;
+}
+.profileImg{
+  object-fit: cover;
+  width: 250px;
+  height: 250px;
+}
+.emp-card-img{
+  height: 100px;
+  width: 100px;
+  object-fit: cover;
+  border-radius: 50%;
+}
+.card-heading{
+  color: var(--primary-color);
+}
+.card-mid b:first-child{
+  color: var(--primary-color);
 }

@@ -7,7 +7,6 @@ import { routes } from "./Routing";
 import 'react-loading-skeleton/dist/skeleton.css';
 import AppContextProvider from "./context/AppContext";
 import Loader from "./components/Loader";
-import { SkeletonTheme } from "react-loading-skeleton";
 import NoInternet from "./NoInternet";
 import Aos from "aos";
 const App = () => {
@@ -20,11 +19,9 @@ const App = () => {
     return (
       <NoInternet>
       <AppContextProvider>
-        <SkeletonTheme duration={2}>
           <Suspense fallback={<Loader height="100vh" />}>
             <RouterProvider router={routes} />
           </Suspense>
-        </SkeletonTheme>
       </AppContextProvider>
       </NoInternet>
     )

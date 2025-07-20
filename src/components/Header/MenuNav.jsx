@@ -47,6 +47,12 @@ const MenuNav = () => {
                 <li>
                   <Link className="dropdown-item" to="/use_api">use() API</Link>
                 </li>
+                <li>
+                  <Link className="dropdown-item" to="/customers_report">Customer Reports</Link>
+                </li>
+                <li>
+                  <Link className="dropdown-item" to="/manageEmployee">Add Employee</Link>
+                </li>
               </ul>
             </li>
 

@@ -1,6 +1,5 @@
 import { createBrowserRouter } from "react-router-dom"
 import { lazy } from "react"
-import NotFound from "./NotFound"
 import ActionStateHook from "./components/pages/ActionStateHook"
 import UseAPI from "./components/pages/UseAPI"
 
@@ -19,6 +18,10 @@ const APIPagination2 = lazy(() => import("./components/pages/APIPagination2"))
 const ReactSelect = lazy(() => import("./components/pages/ReactSelect"))
 const APIPagination = lazy(() => import("./components/pages/APIPagination"))
 const APIPractice = lazy(() => import("./components/pages/APIPractice"))
+const NotFound = lazy(() => import("./NotFound"))
+const CustomerReports = lazy(() => import("./components/pages/CustomerReports"))
+const ManageEmployees = lazy(() => import("./components/pages/ManageEmployees"))
+const EditEmployee = lazy(() => import("./components/pages/EditEmployee"))
 export const routes = createBrowserRouter([
     {
         element: <MainWrapper />,
@@ -91,6 +94,18 @@ export const routes = createBrowserRouter([
                     {
                         path: "/use_api",
                         element: <UseAPI/>
+                    },
+                    {
+                        path: "/customers_report",
+                        element: <CustomerReports/>
+                    },
+                    {
+                        path: "/manageEmployee",
+                        element: <ManageEmployees/>
+                    },
+                    {
+                        path: `/editEmployee/:id`,
+                        element: <EditEmployee/>
                     },
                 ]
             }
